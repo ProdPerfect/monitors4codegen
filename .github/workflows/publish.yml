@@ -1,0 +1,28 @@
+name: Publish to Gemfury
+on:
+  release:
+    types: [created]
+env:
+  GEMFURY_DEPLOY_TOKEN: ${{ secrets.GEMFURY_DEPLOY_TOKEN }}
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          python -m pip install --upgrade pip
+          pip install setuptools wheel twine
+          poetry config http-basic.fury $GEMFURY_DEPLOY_TOKEN NOPASS
+          poetry install
+      - name: Build and publish
+        env:
+          TWINE_USERNAME: ${{ secrets.GEMFURY_PUSH_ONLY_TOKEN }}
+        run: |
+          poetry build
+          twine upload dist/* --repository-url https://push.fury.io/prodperfect -p ""

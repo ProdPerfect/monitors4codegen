@@ -19,6 +19,11 @@ classifiers = [
     "Programming Language :: Rust",
 ]
 
+[[tool.poetry.source]]
+url = "https://pypi.fury.io/prodperfect/"
+name = "fury"
+secondary = true
+
 [tool.poetry.dependencies]
 python = "^3.12"
 pydantic = "*"
